@@ -12,6 +12,7 @@ This bot is designed to help you **keep your channels safe** from copyright issu
 - **Advanced Protection**: Safeguard your channel from malicious or harmful links! 🔒
 - **Easy-to-use**: Simply use `/start` and get started with a smooth experience. 🚀
 - **Admin Controls**: Access commands to manage your channels and users with ease! 🛠️
+- Dynamic Force Subscribe system system.
 
 ---
 

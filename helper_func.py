@@ -3,9 +3,11 @@ import re
 import asyncio
 from pyrogram import filters
 from pyrogram.enums import ChatMemberStatus
-from config import ADMINS
+from config import ADMINS, FORCE_SUB, FSUB_PIC
+from database.fsub_db import get_fsub
 from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 from pyrogram.errors import FloodWait
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
         
 async def encode(string):
@@ -44,4 +46,49 @@ def get_readable_time(seconds: int) -> str:
     return up_time
 
 
-       
+async def force_sub(client, message):
+    if FORCE_SUB == "False":
+        return True
+
+    if message.from_user.id in ADMINS:
+        return True
+
+    fsub_channel = await get_fsub()
+    if not fsub_channel:
+        return True
+
+    try:
+        await client.get_chat_member(fsub_channel['chat_id'], message.from_user.id)
+    except UserNotParticipant:
+        try:
+            invite_link = await client.create_chat_invite_link(fsub_channel['chat_id'])
+        except Exception as e:
+            print(e)
+            return False
+
+        if FSUB_PIC:
+            await message.reply_photo(
+                photo=FSUB_PIC,
+                caption="You must join our channel to use this bot.",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton("Join Channel", url=invite_link.invite_link)
+                        ]
+                    ]
+                )
+            )
+        else:
+            await message.reply_text(
+                "You must join our channel to use this bot.",
+                reply_markup=InlineKeyboardMarkup(
+                    [
+                        [
+                            InlineKeyboardButton("Join Channel", url=invite_link.invite_link)
+                        ]
+                    ]
+                )
+            )
+        return False
+
+    return True

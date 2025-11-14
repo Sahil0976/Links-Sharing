@@ -12,55 +12,41 @@ from pyrogram.errors import FloodWait, UserIsBlocked, InputUserDeactivated, User
 from bot import Bot
 from datetime import datetime, timedelta
 from config import ADMINS, OWNER_ID
-from helper_func import encode, decode
+from helper_func import encode, decode, force_sub
 from database.database import save_encoded_link, get_channel_by_encoded_link, save_encoded_link2, get_channel_by_encoded_link2
 from database.database import add_user, del_user, full_userbase, present_user, is_admin
 from plugins.newpost import revoke_invite_after_10_minutes
         
-#=====================================================================================##
-
 @Bot.on_message(filters.command('start') & filters.private)
 async def start_command(client: Bot, message: Message):
     user_id = message.from_user.id
-
-    # Check if the user is banned
+    if not await force_sub(client, message):
+        return
     if user_id in user_banned_until:
-        # Check if the ban duration has not expired
         if datetime.now() < user_banned_until[user_id]:
-            # User is still banned, do not process the command
             return await message.reply_text("🚫 You are temporarily banned from using commands due to spamming. Try again later.")
-
-    # Proceed with the original functionality if the user is not banned
     text = message.text
-    await add_user(user_id)  # Add user to DB
-    
+    await add_user(user_id)
     if len(text) > 7:
         try:
             base64_string = text.split(" ", 1)[1]
             is_request = base64_string.startswith("req_")
-            
             if is_request:
                 base64_string = base64_string[4:]
                 channel_id = await get_channel_by_encoded_link2(base64_string)
             else:
                 channel_id = await get_channel_by_encoded_link(base64_string)
-            
             if not channel_id:
                 return await message.reply_text("⚠️ Invalid or expired invite link.")
-            
             invite = await client.create_chat_invite_link(
                 chat_id=channel_id,
                 expire_date=datetime.now() + timedelta(minutes=10),
                 creates_join_request=is_request
             )
-
             button_text = "🛎️ Request to Join" if is_request else "🔗 Join Channel"
             button = InlineKeyboardMarkup([[InlineKeyboardButton(button_text, url=invite.invite_link)]])
-
             await message.reply_text("Here is your link! Click below to proceed:", reply_markup=button)
-
             asyncio.create_task(revoke_invite_after_10_minutes(client, channel_id, invite.invite_link, is_request))
-
         except Exception as e:
             await message.reply_text("⚠️ Invalid or expired link.")
             print(f"Decoding error: {e}")
@@ -71,19 +57,13 @@ async def start_command(client: Bot, message: Message):
                 InlineKeyboardButton("Close", callback_data="close")]
             ]
         )
-        
         await message.reply_text(
             "<b><i>Welcome to the advanced links sharing bot.\nWith this bot, you can share links and keep your channels safe from copyright issues</i></b>",
             reply_markup=inline_buttons
         )
-        
-#=====================================================================================##
 
 WAIT_MSG = """"<b>Processing ....</b>"""
-
 REPLY_ERROR = """<code>Use this command as a reply to any telegram message with out any spaces.</code>"""
-
-#=====================================================================================##
 
 @Bot.on_message(filters.command('users') & filters.user(OWNER_ID))
 async def get_users(client: Bot, message: Message):
@@ -93,9 +73,6 @@ async def get_users(client: Bot, message: Message):
     msg = await client.send_message(chat_id=message.chat.id, text=WAIT_MSG)
     users = await full_userbase()
     await msg.edit(f"{len(users)} users are using this bot")
-
-
-#=====================================================================================##
 
 @Bot.on_message(filters.private & filters.command('broadcast') & filters.user(OWNER_ID))
 async def send_text(client: Bot, message: Message):
@@ -107,7 +84,6 @@ async def send_text(client: Bot, message: Message):
         blocked = 0
         deleted = 0
         unsuccessful = 0
-
         pls_wait = await message.reply("<i>Broadcasting Message.. This will Take Some Time </i>")
         for chat_id in query:
             try:
@@ -127,34 +103,25 @@ async def send_text(client: Bot, message: Message):
                 unsuccessful += 1
                 pass
             total += 1
-
         status = f"""<b><u>Broadcast Completed</u>
-
 Total Users: <code>{total}</code>
 Successful: <code>{successful}</code>
 Blocked Users: <code>{blocked}</code>
 Deleted Accounts: <code>{deleted}</code>
 Unsuccessful: <code>{unsuccessful}</code></b>"""
-
         return await pls_wait.edit(status)
-
     else:
         msg = await message.reply(REPLY_ERROR)
         await asyncio.sleep(8)
         await msg.delete()
 
-#=====================================================================================##
-
 @Bot.on_callback_query(filters.regex("help"))
 async def help_callback(client: Bot, callback_query):
-    # Define the inline keyboard with the "Close" button
     inline_buttons = InlineKeyboardMarkup(
         [
             [InlineKeyboardButton("Close", callback_data="close")]
         ]
     )
-    
-    
     await callback_query.answer()
     await callback_query.message.edit_text("<b><i>About Us..\n\n‣ Made for : @Anime_X_Hunters\n‣ Owned by : @Okabe_xRintarou\n‣ Developer : @The_Seishiro_Nagi\n\n Adios !!</i></b>", reply_markup=inline_buttons)
 
@@ -163,36 +130,25 @@ async def close_callback(client: Bot, callback_query):
     await callback_query.answer()
     await callback_query.message.delete()
 
-#=====================================================================================##
-
-
 user_message_count = {}
 user_banned_until = {}
-
 MAX_MESSAGES = 3
-TIME_WINDOW = timedelta(seconds=10)  # Capturing frames
-BAN_DURATION = timedelta(hours=1)  # User ko ban rakhne ka time. hours ko minutes karlena
+TIME_WINDOW = timedelta(seconds=10)
+BAN_DURATION = timedelta(hours=1)
 
 @Bot.on_message(filters.private)
 async def monitor_messages(client: Bot, message: Message):
     user_id = message.from_user.id
     now = datetime.now()
-
     if user_id in ADMINS:
         return 
-
-    
     if user_id in user_banned_until and now < user_banned_until[user_id]:
         await message.reply_text("⚠️ You are temporarily banned from using commands due to spamming. Try again later.")
         return
-
     if user_id not in user_message_count:
         user_message_count[user_id] = []
-
     user_message_count[user_id].append(now)
-
     user_message_count[user_id] = [time for time in user_message_count[user_id] if now - time <= TIME_WINDOW]
-
     if len(user_message_count[user_id]) > MAX_MESSAGES:
         user_banned_until[user_id] = now + BAN_DURATION
         await message.reply_text("🚫 You have been temporarily banned for spamming. Try again in 1 hour.")

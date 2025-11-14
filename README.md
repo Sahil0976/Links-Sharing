@@ -12,6 +12,7 @@ This bot is designed to help you **keep your channels safe** from copyright issu
 - **Advanced Protection**: Safeguard your channel from malicious or harmful links! 🔒
 - **Easy-to-use**: Simply use `/start` and get started with a smooth experience. 🚀
 - **Admin Controls**: Access commands to manage your channels and users with ease! 🛠️
+- Dynamic Force Subscribe system system.
 
 ---
 
@@ -57,6 +58,8 @@ Add the following environment variables to ensure the bot runs smoothly:
 - **PORT**: Port number (usually `8080` for Heroku, or any port on VPS).
 - **DATABASE_URL**: The MongoDB database URI.
 - **DATABASE_NAME**: The name of your database.
+- **FORCE_SUB**: True/False for Enable or Disable.
+- **FSUB_PIC**: Force Subscribe Image URL.
 
 ---
 
@@ -72,12 +75,17 @@ Here are all the commands you can use with the bot:
 - `setchannel`: Set a channel to manage with the bot. ⚙️
 - `delchannel`: Remove a channel from the bot's control. ❌
 - `stats`: Check bot usage and other statistics! 📊
+- `addfsub`: Add a force subscribe channel. ➕
+- `rmfsub`: Remove the force subscribe channel. ➖
+- `fsub`: Show the current force subscribe channel.
 
 ---
 
 ## 🧑‍💻 Credits
 
 This bot is powered by **[Seishiro Nagi](https://t.me/The_Seishiro_Nagi)** 🙏. Huge thanks to **Seishiro Nagi** for the awesome creation and constant support! 🔥
+
+Dynamic Force Subscribe system implemented by [TheZake](https://github.com/pickaxi).
 
 ---
 

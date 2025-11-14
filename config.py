@@ -3,50 +3,34 @@ from os import environ
 import logging
 from logging.handlers import RotatingFileHandler
 
-#Recommended
-TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "0")
-APP_ID = int(os.environ.get("APP_ID", "0"))
-API_HASH = os.environ.get("API_HASH", "0")
+TG_BOT_TOKEN = os.environ.get("TG_BOT_TOKEN", "")
+APP_ID = int(os.environ.get("APP_ID", ""))
+API_HASH = os.environ.get("API_HASH", "")
 
-##---------------------------------------------------------------------------------------------------
-
-#Main 
-OWNER_ID = int(os.environ.get("OWNER_ID", "5090651635"))
+OWNER_ID = int(os.environ.get("OWNER_ID", ""))
 PORT = os.environ.get("PORT", "8010")
 
-##---------------------------------------------------------------------------------------------------
-
-#Database
-DB_URI = os.environ.get("DATABASE_URL", "0")
+DB_URI = os.environ.get("DATABASE_URL", "")
 DB_NAME = os.environ.get("DATABASE_NAME", "links-sharing")
 
-##---------------------------------------------------------------------------------------------------
-
-#Default
 TG_BOT_WORKERS = int(os.environ.get("TG_BOT_WORKERS", "4"))
-START_MSG = os.environ.get("START_MESSAGE", "") #No Need keep it blank
+START_MSG = os.environ.get("START_MESSAGE", "")
 try:
     ADMINS=[]
-    for x in (os.environ.get("ADMINS", "5090651635").split()):
+    for x in (os.environ.get("ADMINS", "6573328336").split()):
         ADMINS.append(int(x))
 except ValueError:
         raise Exception("Your Admins list does not contain valid integers.")
 
-##---------------------------------------------------------------------------------------------------        
-
-#Default
 BOT_STATS_TEXT = "<b>BOT UPTIME</b>\n{uptime}"
 USER_REPLY_TEXT = None
 
-##---------------------------------------------------------------------------------------------------
-
-#Admin == OWNERID
 ADMINS.append(OWNER_ID)
-ADMINS.append(5090651635)
+ADMINS.append(6573328336)
 
-##---------------------------------------------------------------------------------------------------
+FORCE_SUB = os.environ.get("FORCE_SUB", "True")
+FSUB_PIC = os.environ.get("FSUB_PIC", "https://i.ibb.co/xK56gh8W/photo-2025-11-14-13-10-23-7572567765697953804.jpg")
 
-#Default
 LOG_FILE_NAME = "links-sharingbot.txt"
 
 logging.basicConfig(
@@ -64,8 +48,5 @@ logging.basicConfig(
 )
 logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
-
 def LOGGER(name: str) -> logging.Logger:
     return logging.getLogger(name)
-   
-##---------------------------------------------------------------------------------------------------

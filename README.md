@@ -74,13 +74,15 @@ Here are all the commands you can use with the bot:
 - `stats`: Check bot usage and other statistics! 📊
 - `addfsub`: Add a force subscribe channel. ➕
 - `rmfsub`: Remove the force subscribe channel. ➖
-- `fsub`: Show the current force subscribe channel. ℹ️
+- `fsub`: Show the current force subscribe channel.
 
 ---
 
 ## 🧑‍💻 Credits
 
 This bot is powered by **[Seishiro Nagi](https://t.me/The_Seishiro_Nagi)** 🙏. Huge thanks to **Seishiro Nagi** for the awesome creation and constant support! 🔥
+
+Dynamic Force Subscribe system implemented by [TheZake](https://github.com/pickaxi).
 
 ---
 

@@ -72,6 +72,9 @@ Here are all the commands you can use with the bot:
 - `setchannel`: Set a channel to manage with the bot. ⚙️
 - `delchannel`: Remove a channel from the bot's control. ❌
 - `stats`: Check bot usage and other statistics! 📊
+- `addfsub`: Add a force subscribe channel. ➕
+- `rmfsub`: Remove the force subscribe channel. ➖
+- `fsub`: Show the current force subscribe channel. ℹ️
 
 ---
 

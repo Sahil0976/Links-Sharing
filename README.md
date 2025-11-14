@@ -58,6 +58,8 @@ Add the following environment variables to ensure the bot runs smoothly:
 - **PORT**: Port number (usually `8080` for Heroku, or any port on VPS).
 - **DATABASE_URL**: The MongoDB database URI.
 - **DATABASE_NAME**: The name of your database.
+- **FORCE_SUB**: True/False for Enable or Disable.
+- **FSUB_PIC**: Force Subscribe Image URL.
 
 ---
 

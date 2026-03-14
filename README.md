@@ -21,7 +21,9 @@ This bot is designed to help you **keep your channels safe** from copyright issu
 
 *Before you deploy on HEROKU, you should fork the repo and change its name*<br>
 
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)</br>
+<a href="https://www.heroku.com/deploy">
+  <img src="https://www.herokucdn.com/deploy/button.svg" alt="Deploy">
+</a>
 
 ---
 
